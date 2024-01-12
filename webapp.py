@@ -21,7 +21,7 @@ st.markdown("##")
 
 # ========
 # # FILTER
-st.sidebar.header("Please Filter Here:")
+st.sidebar.header("Select the -Disaster Name- Filter Here:")
 
 disasterName = st.sidebar.multiselect(
     "Select the Disaster Name:",
