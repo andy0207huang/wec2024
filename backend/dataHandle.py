@@ -24,9 +24,7 @@ def addCountry(data: pd.DataFrame, col: str):
         long = data.iloc[i]['long']
 
         country = convertToCountry(lat, long)
-        data.loc[3, [col]] = country
-
-        time.sleep(1)
+        data.loc[i, [col]] = country
 
     data.to_csv('./test/MOCK_DATA.csv')
 
