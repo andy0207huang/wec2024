@@ -22,6 +22,7 @@ def addRow(path: str, data: pd.DataFrame, row: dict) -> None:
 
     data.to_csv(path, index=False)
 
+# def deleteRow(path: str, data: pd.DataFrame)
 
 def addCountry(path: str, data: pd.DataFrame, col: str) -> None:
 
