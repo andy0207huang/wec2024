@@ -2,6 +2,7 @@
 import pandas as pd
 import streamlit as st
 import pydeck as pdk
+import altair as alt
 
 from backend.dataHandle import getAllData, addRow, editData
 
@@ -11,7 +12,8 @@ st.set_page_config(
 )
 
 ## LOAD CSV
-dfcsv = pd.read_csv("MOCK_DATA.csv")
+path = "MOCK_DATA.csv"
+dfcsv = getAllData(open(path, "r"))
 
 ## TITLE
 st.title("🌎🌊🌀🌪️ Natural Disaster Webapp")
@@ -59,9 +61,7 @@ with st.expander("Add New Disaster Event", expanded=False):
 
     add_button = st.button("Add Disaster")
     if add_button:
-        new_data = pd.DataFrame(
-            [
-                {
+        new_data = {
                     "Name": new_name,
                     "long": new_longitude,
                     "lat": new_latitude,
@@ -69,12 +69,7 @@ with st.expander("Add New Disaster Event", expanded=False):
                     "intensity": new_intensity,
                     "type": new_type,
                 }
-            ]
-        )
-        # Append new data to dataframe
-        dfcsv = pd.concat([dfcsv, new_data], ignore_index=True)
-        # Update CSV file
-        dfcsv.to_csv("MOCK_DATA.csv", index=False)
+        addRow(path, dfcsv, new_data)
         st.success("Added New Disaster: " + new_name)
 
 # Collapsible section for deleting an entry
@@ -154,6 +149,48 @@ render = pdk.Deck(
 )
 render
 
+## REALTIME GRAPH
+custom_color_scale = alt.Scale(domain=['tornado', 'hurricane', 'earthquake', 'flood'], range=['#FFFF00', '#A9A9A9', '#A52A2A', '#0000FF'])
+
+# Graph - Vertical Stack Bar by YYYY-MM
+st.header("Vertical Stack Bar of Counts of each Disaster Type by YYYY-MM")
+# Aconvert date to YYYY-MM format string
+df_selection['MonthYear'] = pd.to_datetime(df_selection['date']).dt.to_period('M').astype(str)
+# Count each disaster type for each YYYY-MM
+aggregated_data = pd.DataFrame(df_selection.groupby(['MonthYear', 'type']).size()).reset_index()
+aggregated_data.columns = ['MonthYear', 'type', 'count']
+
+vsb1 = alt.Chart(aggregated_data).mark_bar().encode(
+    x='MonthYear:N',
+    y='sum(count):Q',
+    color=alt.Color('type:N', scale=custom_color_scale)
+).properties(
+    width=600,
+    height=500
+)
+
+# Show GRAPH
+st.altair_chart(vsb1, use_container_width=True)
+
+
+# Graph - Vertical Stack Bar by COUNTRY
+st.header("Vertical Stack Bar of Counts of each Disaster Type by Country")
+# Aconvert date to YYYY-MM format string
+# Count each disaster type for each YYYY-MM
+aggregated_data_c = pd.DataFrame(df_selection.groupby(['Country', 'type']).size()).reset_index()
+aggregated_data_c.columns = ['Country', 'type', 'count']
+
+vsb2 = alt.Chart(aggregated_data_c).mark_bar().encode(
+    x='Country:N',
+    y='sum(count):Q',
+    color=alt.Color('type:N', scale=custom_color_scale)
+).properties(
+    width=900,
+    height=500
+)
+
+# Show GRAPH
+st.altair_chart(vsb2, use_container_width=True)
 
 ## RAW TABLE DATA
 st.header("Filtered Data")
