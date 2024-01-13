@@ -1,6 +1,5 @@
 # ---WEBAPP---
 import pandas as pd
-import plotly.express as px
 import streamlit as st
 import altair as alt
 import matplotlib.pyplot as plt
@@ -8,15 +7,17 @@ import numpy as np
 import pydeck as pdk
 
 
+# Set page configuration
 st.set_page_config(
     page_title="WEC 2024 - Natural Disaster",
     page_icon=":bar_chart:",
     layout="centered"
 )
 
+# Load data
 dfcsv = pd.read_csv("MOCK_DATA.csv")
 
-# DASHBOARD
+# Dashboard title
 st.title(":bar_chart: Natural Disaster Webapp")
 st.markdown("##")
 
@@ -25,19 +26,17 @@ st.markdown("##")
 # # FILTER
 st.sidebar.header("Select the -Disaster Name- Filter Here:")
 
-disasterName = st.sidebar.multiselect(
-    "Select the Disaster Name:",
-    options=dfcsv["Name"].unique(),
-    default=dfcsv["Name"].unique()
-)
-
+with st.sidebar.expander("Filter by name:", expanded=True):
+    disasterName = st.multiselect(
+        "Select the Disaster Name:",
+        options=dfcsv["Name"].unique(),
+        default=dfcsv["Name"].unique()
+    )
 df_selection = dfcsv.query(
     "Name == @disasterName"
 )
 
-
-# # --dynamic--
-# MAP
+# # MAP
 # If no disaster selected, show just the map
 if disasterName:
     df_selection = dfcsv[dfcsv["Name"].isin(disasterName)]
@@ -89,5 +88,32 @@ st.pydeck_chart(pdk.Deck(
 
 # ========
 # # TABLE RAW DATA
+# Collapsible section for adding new disaster entry
+with st.expander("Add New Disaster Event", expanded=False):
+    new_name = st.text_input("Name", "Hurricane X")
+    new_longitude = st.number_input("Longitude", value=0.0)
+    new_latitude = st.number_input("Latitude", value=0.0)
+    new_date = st.date_input("Date")
+    new_intensity = st.slider("Intensity", 1, 10, 5)
+    new_type = st.selectbox("Type", ["tornado", "hurricane", "earthquake", "flood", "wildfire"])
+
+    add_button = st.button("Add Disaster")
+    if add_button:
+        new_data = pd.DataFrame([{
+            "Name": new_name,
+            "long": new_longitude,
+            "lat": new_latitude,
+            "date": new_date,
+            "intensity": new_intensity,
+            "type": new_type
+        }])
+        # Append new data to dataframe
+        dfcsv = pd.concat([dfcsv, new_data], ignore_index=True)
+        # Update CSV file
+        dfcsv.to_csv("MOCK_DATA.csv", index=False)
+        st.success("Added New Disaster: " + new_name)
+
+# Filter and display data
+df_selection = dfcsv.query("Name == @disasterName")
 st.header("Scraped Data")
 st.dataframe(df_selection)
