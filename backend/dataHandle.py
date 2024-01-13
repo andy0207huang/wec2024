@@ -1,7 +1,5 @@
-import pandas as pd
-import numpy as np
 import datetime
-import time
+import pandas as pd
 
 from locations import convertToCountry
 
@@ -11,10 +9,26 @@ def getAllData(csv):
 
     return data
 
-def addData(data: pd.DataFrame, col: str, value: str, name: str, date: str) -> pd.DataFrame:
+def editData(path: str, data: pd.DataFrame, col: str, value: str, name: str, date: str) -> None:
     data.loc[(data['Name'] == name) & (data['date'] == date), col] = value
 
-def addCountry(data: pd.DataFrame, col: str):
+    data.to_csv(path, index=False)
+
+def addRow(path: str, data: pd.DataFrame, row: dict) -> None:
+    row['Country'] = convertToCountry(row['lat'], row['long'])
+    
+    row['date'] = pd.to_datetime(row['date']).strftime("%m/%d/%Y")
+
+    data.loc[len(data.index)] = row
+
+    data.to_csv(path, index=False)
+
+def deleteRow(path: str, data: pd.DataFrame, name: str, date: str):
+    data.drop(data[(data['Name'] == name) & (data['date'] == date)].index)
+
+    data.to_csv(path, index=False)
+
+def addCountry(path: str, data: pd.DataFrame, col: str) -> None:
 
     data[col] = "Na"
 
@@ -24,11 +38,9 @@ def addCountry(data: pd.DataFrame, col: str):
         long = data.iloc[i]['long']
 
         country = convertToCountry(lat, long)
-        data.loc[3, [col]] = country
+        data.loc[i, [col]] = country
 
-        time.sleep(1)
-
-    data.to_csv('./test/MOCK_DATA.csv')
+    data.to_csv(path, index=False)
 
 if __name__ == "__main__":
     csv = open('./test/MOCK_DATA.csv', 'r')
@@ -37,13 +49,28 @@ if __name__ == "__main__":
 
     print(data)
 
+    # addCountry(data, "Country")
+    # print(data)
+
     # date = "1/7/2023"
-    # addData(data, "Country", "Serbia", "Pannier", date)
+    # editData('./test/MOCK_DATA.csv', data, "Country", "Serbia", "Pannier", date)
 
     # print(data)
 
-    addCountry(data, "Country")
-    print(data)
+    row = {
+        'Name': 'Test',
+        'long': -81.276223,
+        'lat': 43.003999,
+        'date': "1/12/24",
+        'intensity': 3,
+        'type': 'tornado'
+    }
+
+    addRow('./test/MOCK_DATA.csv', data, row)
+    print(data.tail)
+
+    deleteRow('./test/MOCK_DATA.csv', data, "Test", "1/12/24")
+    print(data.tail)
 
 
     
