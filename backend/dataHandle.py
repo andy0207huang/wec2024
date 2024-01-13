@@ -1,7 +1,5 @@
 import pandas as pd
 import numpy as np
-import datetime
-import time
 
 from locations import convertToCountry
 
@@ -11,10 +9,12 @@ def getAllData(csv):
 
     return data
 
-def editData(data: pd.DataFrame, col: str, value: str, name: str, date: str) -> pd.DataFrame:
+def editData(path: str, data: pd.DataFrame, col: str, value: str, name: str, date: str) -> pd.DataFrame:
     data.loc[(data['Name'] == name) & (data['date'] == date), col] = value
+    
+    data.to_csv(path)
 
-def addCountry(data: pd.DataFrame, col: str):
+def addCountry(path: str, data: pd.DataFrame, col: str) -> None:
 
     data[col] = "Na"
 
@@ -26,7 +26,7 @@ def addCountry(data: pd.DataFrame, col: str):
         country = convertToCountry(lat, long)
         data.loc[i, [col]] = country
 
-    data.to_csv('./test/MOCK_DATA.csv')
+    data.to_csv(path)
 
 if __name__ == "__main__":
     csv = open('./test/MOCK_DATA.csv', 'r')
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     # print(data)
 
     date = "1/7/2023"
-    editData(data, "Country", "Seria", "Pannier", date)
+    editData('./test/MOCK_DATA.csv', data, "Country", "Serbia", "Pannier", date)
 
     print(data)
 
