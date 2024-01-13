@@ -12,7 +12,8 @@ st.set_page_config(
 )
 
 ## LOAD CSV
-dfcsv = pd.read_csv("MOCK_DATA-OUTPUT.csv")
+path = "MOCK_DATA.csv"
+dfcsv = getAllData(open(path, "r"))
 
 ## TITLE
 st.title("🌎🌊🌀🌪️ Natural Disaster Webapp")
@@ -60,9 +61,7 @@ with st.expander("Add New Disaster Event", expanded=False):
 
     add_button = st.button("Add Disaster")
     if add_button:
-        new_data = pd.DataFrame(
-            [
-                {
+        new_data = {
                     "Name": new_name,
                     "long": new_longitude,
                     "lat": new_latitude,
@@ -70,12 +69,7 @@ with st.expander("Add New Disaster Event", expanded=False):
                     "intensity": new_intensity,
                     "type": new_type,
                 }
-            ]
-        )
-        # Append new data to dataframe
-        dfcsv = pd.concat([dfcsv, new_data], ignore_index=True)
-        # Update CSV file
-        dfcsv.to_csv("MOCK_DATA.csv", index=False)
+        addRow(path, dfcsv, new_data)
         st.success("Added New Disaster: " + new_name)
 
 # Collapsible section for deleting an entry
