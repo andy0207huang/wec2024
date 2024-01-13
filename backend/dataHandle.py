@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import datetime
+import time
 
 from locations import convertToCountry
 
@@ -24,6 +25,8 @@ def addCountry(data: pd.DataFrame, col: str):
 
         country = convertToCountry(lat, long)
         data.loc[3, [col]] = country
+
+        time.sleep(1)
 
     data.to_csv('./test/MOCK_DATA.csv')
 
