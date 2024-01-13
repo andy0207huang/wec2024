@@ -48,6 +48,15 @@ with st.sidebar.expander("Filter by Date:", expanded=False):
         value=(dfcsv["date"].min(), dfcsv["date"].max()),
     )
 
+# Sidebar - Filter by Country Name
+with st.sidebar.expander("Filter by Country Name:", expanded=True):
+    Countryname = st.multiselect(
+        "Select the Country Name:",
+        options=dfcsv["Country"].unique(),
+        default=dfcsv["Country"].unique(),
+    )
+
+
 # Collapsible section for adding new disaster entry
 with st.expander("Add New Disaster Event", expanded=False):
     new_name = st.text_input("Name", "Hurricane X")
@@ -101,7 +110,7 @@ with st.expander("Edit Disaster Event", expanded=False):
 
 # Applying Filters
 df_selection = dfcsv.query(
-    "Name == @disasterName & type == @disasterType & intensity >= @selected_intensity[0] & intensity <= @selected_intensity[1] & date >= @start_date & date <= @end_date"
+    "Name == @disasterName & type == @disasterType & intensity >= @selected_intensity[0] & intensity <= @selected_intensity[1] & date >= @start_date & date <= @end_date & Country == @Countryname"
 )
 
 ## MAP
