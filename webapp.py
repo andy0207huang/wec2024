@@ -83,30 +83,49 @@ with st.expander("Add New Disaster Event", expanded=False):
 
 # Collapsible section for deleting an entry
 with st.expander("Delete Disaster Event", expanded=False):
+    # Select the name to delete
     delete_name = st.selectbox("Select the Name to Delete:", options=dfcsv["Name"].unique())
+
+    # Filter the DataFrame to get all events for the selected name
+    events_for_name = dfcsv[dfcsv['Name'] == delete_name]
+
+    if not events_for_name.empty:
+        # Create a list of date options for the selected name
+        date_options = events_for_name['date'].tolist()
+        
+        # Select the date when the disaster occurred
+        delete_date = st.selectbox("Select the date when the disaster occurred:", options=date_options)
+        
+        # Get information about the selected event
+        disaster_info = events_for_name[events_for_name['date'] == delete_date].iloc[0]
+    else:
+        st.warning("No events found for the selected name.")
+
     if st.button("Delete"):
-        dfcsv = dfcsv[dfcsv["Name"] != delete_name]
-        dfcsv.to_csv("MOCK_DATA.csv", index=False)
-        st.success("Deleted Disaster Sucessfully: " + new_name)
+        # Remove the selected event by name and date
+        dfcsv = dfcsv[~((dfcsv["Name"] == delete_name) & (dfcsv["date"] == delete_date))]
+        dfcsv.to_csv("MOCK_DATA-OUTPUT.csv", index=False)
+        st.success("Deleted Disaster Successfully: " + delete_name + " on " + delete_date)
 
-# Collapsible section for editing a disaster event
-with st.expander("Edit Disaster Event", expanded=False):
-    edit_name = st.selectbox("Select the Name to Edit:", options=dfcsv["Name"].unique())
 
-    # Pre-fill information for name is selected
-    disaster_info = dfcsv[dfcsv['Name'] == edit_name].iloc[0]
+# # Collapsible section for editing a disaster event
+# with st.expander("Edit Disaster Event", expanded=False):
+#     edit_name = st.selectbox("Select the Name to Edit:", options=dfcsv["Name"].unique())
 
-    new_name = st.text_input("New Name (leave blank to keep original)", value="")
-    new_type = st.multiselect("Type", options=dfcsv["type"].unique(), default=disaster_info['type'])
-    new_date = st.text_input("New Date", value=disaster_info['date'])
-    intensity_options = list(range(1, 11))  # Creates a list of integers from 1 to 10
-    new_intensity = st.multiselect("Intensity", options=intensity_options, default=[disaster_info['intensity']])
-    new_longitude = st.text_input("New Longitude", value=disaster_info['long'])
-    new_latitude = st.text_input("New Latitude", value=disaster_info['lat'])
+#     # Pre-fill information for name is selected
+#     disaster_info = dfcsv[dfcsv['Name'] == edit_name].iloc[0]
 
-    if st.button("Save Edits"):
-        # Add code here to edit into csv file
-        st.success("Disaster details updated.")
+#     new_name = st.text_input("New Name (leave blank to keep original)", value="")
+#     new_type = st.multiselect("Type", options=dfcsv["type"].unique(), default=disaster_info['type'])
+#     new_date = st.text_input("New Date", value=disaster_info['date'])
+#     intensity_options = list(range(1, 11))  # Creates a list of integers from 1 to 10
+#     new_intensity = st.multiselect("Intensity", options=intensity_options, default=[disaster_info['intensity']])
+#     new_longitude = st.text_input("New Longitude", value=disaster_info['long'])
+#     new_latitude = st.text_input("New Latitude", value=disaster_info['lat'])
+
+#     if st.button("Save Edits"):
+#         # Add code here to edit into csv file
+#         st.success("Disaster details updated.")
 
 # Applying Filters
 df_selection = dfcsv.query(
