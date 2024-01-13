@@ -8,7 +8,7 @@ from backend.dataHandle import getAllData, addRow, editData
 
 ## Set page configuration
 st.set_page_config(
-    page_title="WEC 2024 - Natural Disaster", page_icon=":bar_chart:", layout="centered"
+    page_title="WEC 2024 - Natural Disaster", page_icon="🌪️", layout="centered"
 )
 
 ## LOAD CSV
@@ -16,7 +16,8 @@ path = "MOCK_DATA-OUTPUT.csv"
 dfcsv = getAllData(open(path, "r"))
 
 ## TITLE
-st.title("🌎🌊🌀🌪️ WEC2024 - Natural Disaster Dashboard")
+st.title("🌎🌊🌀🌪️ WEC2024")
+st.title("Natural Disaster Dashboard")
 st.markdown("##")
 
 ## SIDEBAR FILTER
@@ -162,7 +163,7 @@ render
 custom_color_scale = alt.Scale(domain=['tornado', 'hurricane', 'earthquake', 'flood'], range=['#FFFF00', '#A9A9A9', '#A52A2A', '#0000FF'])
 
 # Graph - Vertical Stack Bar by YYYY-MM
-st.header("Vertical Stack Bar of Counts of each Disaster Type by YYYY-MM")
+st.header("Vertical Stack Bar of Counts of each Disaster Type by (YYYY-MM)")
 # Aconvert date to YYYY-MM format string
 df_selection['MonthYear'] = pd.to_datetime(df_selection['date']).dt.to_period('M').astype(str)
 # Count each disaster type for each YYYY-MM
@@ -183,9 +184,8 @@ st.altair_chart(vsb1, use_container_width=True)
 
 
 # Graph - Vertical Stack Bar by COUNTRY
-st.header("Vertical Stack Bar of Counts of each Disaster Type by Country")
-# Aconvert date to YYYY-MM format string
-# Count each disaster type for each YYYY-MM
+st.header("Vertical Stack Bar of Counts of each Disaster Type by (Country)")
+# Count each disaster type by COUNTRY
 aggregated_data_c = pd.DataFrame(df_selection.groupby(['Country', 'type']).size()).reset_index()
 aggregated_data_c.columns = ['Country', 'type', 'count']
 
@@ -201,6 +201,25 @@ vsb2 = alt.Chart(aggregated_data_c).mark_bar().encode(
 # Show GRAPH
 st.altair_chart(vsb2, use_container_width=True)
 
+
+# Graph - Vertical Stack Bar by INTENSITY
+st.header("Vertical Stack Bar of Counts of each Disaster Type by (Intensity)")
+# Count each disaster type by INTENSITY
+aggregated_data_i = pd.DataFrame(df_selection.groupby(['intensity', 'type']).size()).reset_index()
+aggregated_data_i.columns = ['intensity', 'type', 'count']
+
+vsb3 = alt.Chart(aggregated_data_i).mark_bar().encode(
+    x='intensity:N',
+    y='sum(count):Q',
+    color=alt.Color('type:N', scale=custom_color_scale)
+).properties(
+    width=900,
+    height=500
+)
+
+# Show GRAPH
+st.altair_chart(vsb3, use_container_width=True)
+
 ## RAW TABLE DATA
-st.header("Filtered Data")
+st.header("Data Table")
 st.dataframe(df_selection)
