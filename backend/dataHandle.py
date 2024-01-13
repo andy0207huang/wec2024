@@ -9,8 +9,8 @@ def getAllData(csv):
 
     return data
 
-def editData(path: str, data: pd.DataFrame, col: str, value: str, name: str, date: str) -> None:
-    data.loc[(data['Name'] == name) & (data['date'] == date), col] = value
+def editData(path: str, data: pd.DataFrame, value: str, name: str, date: str) -> None:
+    data.loc[(data['Name'] == name) & (data['date'] == date)] = value
 
     data.to_csv(path, index=False)
 
@@ -22,6 +22,8 @@ def addRow(path: str, data: pd.DataFrame, row: dict) -> None:
     data.loc[len(data.index)] = row
 
     data.to_csv(path, index=False)
+
+
 
 def addCountry(path: str, data: pd.DataFrame, col: str) -> None:
 
@@ -47,11 +49,6 @@ if __name__ == "__main__":
     # addCountry(data, "Country")
     # print(data)
 
-    date = "01/12/2024"
-    editData('./test/MOCK_DATA.csv', data, "Country", "Canada", "Test", date)
-
-    print(data)
-
     row = {
         'Name': 'Test',
         'long': -81.276223,
@@ -63,6 +60,23 @@ if __name__ == "__main__":
 
     addRow('./test/MOCK_DATA.csv', data, row)
     print(data.tail)
+
+    # row = {
+    #     'Name': 'Test',
+    #     'long': -81.276223,
+    #     'lat': 43.003999,
+    #     'date': "1/12/24",
+    #     'intensity': 3,
+    #     'type': 'tornado',
+    #     'Country': "Canda"
+    # }
+
+    # date = "1/2/2024"
+    # editData('./test/MOCK_DATA.csv', data, row, "Test", date)
+
+    # print(data)
+
+    
 
 
 
