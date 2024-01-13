@@ -4,7 +4,7 @@ import streamlit as st
 import pydeck as pdk
 import altair as alt
 
-from backend.dataHandle import getAllData, addRow, editDat
+from backend.dataHandle import getAllData, addRow, editData
 
 ## Set page configuration
 st.set_page_config(
@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 ## LOAD CSV
-dfcsv = 
+dfcsv = pd.read_csv("MOCK_DATA.csv")
 
 ## TITLE
 st.title("🌎🌊🌀🌪️ Natural Disaster Webapp")
