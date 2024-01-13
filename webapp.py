@@ -20,6 +20,7 @@ st.title("🌎🌊🌀🌪️ WEC2024")
 st.title("Natural Disaster Dashboard")
 st.markdown("##")
 
+
 ## SIDEBAR FILTER
 # Sidebar - Filter by Name
 with st.sidebar.expander("Filter by Name:", expanded=True):
@@ -113,6 +114,26 @@ with st.expander("Edit Disaster Event", expanded=False):
 df_selection = dfcsv.query(
     "Name == @disasterName & type == @disasterType & intensity >= @selected_intensity[0] & intensity <= @selected_intensity[1] & date >= @start_date & date <= @end_date & Country == @Countryname"
 )
+
+
+## DASHBOARD, THE MOST RECENT
+st.markdown('### ❗❗ Most Recent Disaster ❗❗')
+row1_col1, row1_col2, row1_col3, row1_col4 = st.columns(4)
+row2_col1, row2_col2, row2_col3, row2_col4 = st.columns(4)
+
+most_recent_disaster = df_selection.sort_values(by='date', ascending=False).head(1)
+
+row1_col1.metric("Name", most_recent_disaster['Name'].values[0])
+row1_col2.metric("Date", most_recent_disaster['date'].values[0])
+row1_col3.metric("Type", most_recent_disaster['type'].values[0])
+row1_col4.metric("Intensity", most_recent_disaster['intensity'].values[0])
+
+row2_col1.metric("Longitude", most_recent_disaster['long'].values[0])
+row2_col2.metric("Latitude", most_recent_disaster['lat'].values[0])
+row2_col3.metric("Country", most_recent_disaster['Country'].values[0])
+
+
+
 
 ## MAP
 # Map COLOUR by Type
