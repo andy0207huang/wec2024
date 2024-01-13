@@ -121,7 +121,7 @@ st.markdown('### ❗❗ Most Recent Disaster ❗❗')
 row1_col1, row1_col2, row1_col3, row1_col4 = st.columns(4)
 row2_col1, row2_col2, row2_col3, row2_col4 = st.columns(4)
 
-most_recent_disaster = df_selection.sort_values(by='date', ascending=False).head(1)
+most_recent_disaster = dfcsv.sort_values(by='date', ascending=False).head(1)
 
 row1_col1.metric("Name", most_recent_disaster['Name'].values[0])
 row1_col2.metric("Date", most_recent_disaster['date'].values[0])
