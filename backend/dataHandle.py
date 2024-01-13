@@ -1,7 +1,7 @@
 import datetime
 import pandas as pd
 
-from .locations import convertToCountry
+from locations import convertToCountry
 
 
 def getAllData(csv):
@@ -17,7 +17,7 @@ def editData(path: str, data: pd.DataFrame, col: str, value: str, name: str, dat
 def addRow(path: str, data: pd.DataFrame, row: dict) -> None:
     row['Country'] = convertToCountry(row['lat'], row['long'])
     
-    row['date'] = pd.to_datetime(row['date']).strftime("%m/%d/%Y")
+    row['date'] = pd.to_datetime(row['date']).strftime("%#m/%d/%Y")
 
     data.loc[len(data.index)] = row
 

@@ -2,7 +2,6 @@
 import pandas as pd
 import streamlit as st
 import pydeck as pdk
-import altair as alt
 
 from backend.dataHandle import getAllData, addRow, editData
 
@@ -153,32 +152,7 @@ render = pdk.Deck(
             "<b>Type: </b>{type} <br />"
     },
 )
-
 render
-
-## REALTIME GRAPH
-# Graph - Vertical Stack Bar by YYYY-MM
-st.header("Vertical Stack Bar of Counts of each Disaster Type by YYYY-MM")
-# Aconvert date to YYYY-MM format string
-df_selection['MonthYear'] = pd.to_datetime(df_selection['date']).dt.to_period('M').astype(str)
-# Count each disaster type for each YYYY-MM
-aggregated_data = pd.DataFrame(df_selection.groupby(['MonthYear', 'type']).size()).reset_index()
-aggregated_data.columns = ['MonthYear', 'type', 'count']
-
-vsb1 = alt.Chart(aggregated_data).mark_bar().encode(
-    x='MonthYear:N',
-    y='sum(count):Q',
-    color='type:N'
-).properties(
-    width=600,
-    height=500
-)
-
-# Show GRAPH
-st.altair_chart(vsb1, use_container_width=True)
-
-
-# Graph - Vertical Stack Bar by YYYY-MM
 
 
 ## RAW TABLE DATA
