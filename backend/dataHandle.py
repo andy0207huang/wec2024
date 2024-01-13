@@ -23,11 +23,6 @@ def addRow(path: str, data: pd.DataFrame, row: dict) -> None:
 
     data.to_csv(path, index=False)
 
-def deleteRow(path: str, data: pd.DataFrame, name: str, date: str):
-    data.drop(data[(data['Name'] == name) & (data['date'] == date)].index)
-
-    data.to_csv(path, index=False)
-
 def addCountry(path: str, data: pd.DataFrame, col: str) -> None:
 
     data[col] = "Na"
@@ -52,10 +47,10 @@ if __name__ == "__main__":
     # addCountry(data, "Country")
     # print(data)
 
-    # date = "1/7/2023"
-    # editData('./test/MOCK_DATA.csv', data, "Country", "Serbia", "Pannier", date)
+    date = "01/12/2024"
+    editData('./test/MOCK_DATA.csv', data, "Country", "Canada", "Test", date)
 
-    # print(data)
+    print(data)
 
     row = {
         'Name': 'Test',
@@ -69,8 +64,6 @@ if __name__ == "__main__":
     addRow('./test/MOCK_DATA.csv', data, row)
     print(data.tail)
 
-    deleteRow('./test/MOCK_DATA.csv', data, "Test", "1/12/24")
-    print(data.tail)
 
 
     
