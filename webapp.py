@@ -153,7 +153,6 @@ render = pdk.Deck(
             "<b>Type: </b>{type} <br />"
     },
 )
-
 render
 
 ## REALTIME GRAPH

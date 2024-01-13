@@ -1,7 +1,7 @@
 import datetime
 import pandas as pd
 
-from .locations import convertToCountry
+from locations import convertToCountry
 
 
 def getAllData(csv):
@@ -17,14 +17,9 @@ def editData(path: str, data: pd.DataFrame, col: str, value: str, name: str, dat
 def addRow(path: str, data: pd.DataFrame, row: dict) -> None:
     row['Country'] = convertToCountry(row['lat'], row['long'])
     
-    row['date'] = pd.to_datetime(row['date']).strftime("%m/%d/%Y")
+    row['date'] = pd.to_datetime(row['date']).strftime("%#m/%#d/%Y")
 
     data.loc[len(data.index)] = row
-
-    data.to_csv(path, index=False)
-
-def deleteRow(path: str, data: pd.DataFrame, name: str, date: str):
-    data.drop(data[(data['Name'] == name) & (data['date'] == date)].index)
 
     data.to_csv(path, index=False)
 
@@ -52,16 +47,16 @@ if __name__ == "__main__":
     # addCountry(data, "Country")
     # print(data)
 
-    # date = "1/7/2023"
-    # editData('./test/MOCK_DATA.csv', data, "Country", "Serbia", "Pannier", date)
+    date = "01/12/2024"
+    editData('./test/MOCK_DATA.csv', data, "Country", "Canada", "Test", date)
 
-    # print(data)
+    print(data)
 
     row = {
         'Name': 'Test',
         'long': -81.276223,
         'lat': 43.003999,
-        'date': "1/12/24",
+        'date': "1/2/24",
         'intensity': 3,
         'type': 'tornado'
     }
@@ -69,8 +64,6 @@ if __name__ == "__main__":
     addRow('./test/MOCK_DATA.csv', data, row)
     print(data.tail)
 
-    deleteRow('./test/MOCK_DATA.csv', data, "Test", "1/12/24")
-    print(data.tail)
 
 
     
