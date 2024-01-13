@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 ## LOAD CSV
-dfcsv = pd.read_csv("MOCK_DATA.csv")
+dfcsv = pd.read_csv("MOCK_DATA-OUTPUT.csv")
 
 ## TITLE
 st.title("🌎🌊🌀🌪️ Natural Disaster Webapp")
@@ -157,6 +157,8 @@ render = pdk.Deck(
 render
 
 ## REALTIME GRAPH
+custom_color_scale = alt.Scale(domain=['tornado', 'hurricane', 'earthquake', 'flood'], range=['#FFFF00', '#A9A9A9', '#A52A2A', '#0000FF'])
+
 # Graph - Vertical Stack Bar by YYYY-MM
 st.header("Vertical Stack Bar of Counts of each Disaster Type by YYYY-MM")
 # Aconvert date to YYYY-MM format string
@@ -168,7 +170,7 @@ aggregated_data.columns = ['MonthYear', 'type', 'count']
 vsb1 = alt.Chart(aggregated_data).mark_bar().encode(
     x='MonthYear:N',
     y='sum(count):Q',
-    color='type:N'
+    color=alt.Color('type:N', scale=custom_color_scale)
 ).properties(
     width=600,
     height=500
@@ -178,8 +180,24 @@ vsb1 = alt.Chart(aggregated_data).mark_bar().encode(
 st.altair_chart(vsb1, use_container_width=True)
 
 
-# Graph - Vertical Stack Bar by YYYY-MM
+# Graph - Vertical Stack Bar by COUNTRY
+st.header("Vertical Stack Bar of Counts of each Disaster Type by Country")
+# Aconvert date to YYYY-MM format string
+# Count each disaster type for each YYYY-MM
+aggregated_data_c = pd.DataFrame(df_selection.groupby(['Country', 'type']).size()).reset_index()
+aggregated_data_c.columns = ['Country', 'type', 'count']
 
+vsb2 = alt.Chart(aggregated_data_c).mark_bar().encode(
+    x='Country:N',
+    y='sum(count):Q',
+    color=alt.Color('type:N', scale=custom_color_scale)
+).properties(
+    width=900,
+    height=500
+)
+
+# Show GRAPH
+st.altair_chart(vsb2, use_container_width=True)
 
 ## RAW TABLE DATA
 st.header("Filtered Data")
