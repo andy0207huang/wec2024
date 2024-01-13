@@ -1,7 +1,7 @@
 import datetime
 import pandas as pd
 
-from locations import convertToCountry
+from .locations import convertToCountry
 
 
 def getAllData(csv):
