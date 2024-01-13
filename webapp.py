@@ -12,11 +12,11 @@ st.set_page_config(
 )
 
 ## LOAD CSV
-path = "MOCK_DATA.csv"
+path = "MOCK_DATA-OUTPUT.csv"
 dfcsv = getAllData(open(path, "r"))
 
 ## TITLE
-st.title("🌎🌊🌀🌪️ Natural Disaster Webapp")
+st.title("🌎🌊🌀🌪️ WEC2024 - Natural Disaster Dashboard")
 st.markdown("##")
 
 ## SIDEBAR FILTER
