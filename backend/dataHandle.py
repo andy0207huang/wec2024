@@ -17,7 +17,7 @@ def editData(path: str, data: pd.DataFrame, col: str, value: str, name: str, dat
 def addRow(path: str, data: pd.DataFrame, row: dict) -> None:
     row['Country'] = convertToCountry(row['lat'], row['long'])
     
-    row['date'] = pd.to_datetime(row['date']).strftime("%#m/%d/%Y")
+    row['date'] = pd.to_datetime(row['date']).strftime("%#m/%#d/%Y")
 
     data.loc[len(data.index)] = row
 
@@ -56,7 +56,7 @@ if __name__ == "__main__":
         'Name': 'Test',
         'long': -81.276223,
         'lat': 43.003999,
-        'date': "1/12/24",
+        'date': "1/2/24",
         'intensity': 3,
         'type': 'tornado'
     }
