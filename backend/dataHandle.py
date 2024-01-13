@@ -11,7 +11,7 @@ def getAllData(csv):
 
     return data
 
-def addData(data: pd.DataFrame, col: str, value: str, name: str, date: str) -> pd.DataFrame:
+def editData(data: pd.DataFrame, col: str, value: str, name: str, date: str) -> pd.DataFrame:
     data.loc[(data['Name'] == name) & (data['date'] == date), col] = value
 
 def addCountry(data: pd.DataFrame, col: str):
@@ -35,12 +35,12 @@ if __name__ == "__main__":
 
     print(data)
 
-    # date = "1/7/2023"
-    # addData(data, "Country", "Serbia", "Pannier", date)
-
+    # addCountry(data, "Country")
     # print(data)
 
-    addCountry(data, "Country")
+    date = "1/7/2023"
+    editData(data, "Country", "Seria", "Pannier", date)
+
     print(data)
 
 
