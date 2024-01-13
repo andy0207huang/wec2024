@@ -1,6 +1,5 @@
 import datetime
 import pandas as pd
-import numpy as np
 
 from locations import convertToCountry
 
@@ -17,12 +16,17 @@ def editData(path: str, data: pd.DataFrame, col: str, value: str, name: str, dat
 
 def addRow(path: str, data: pd.DataFrame, row: dict) -> None:
     row['Country'] = convertToCountry(row['lat'], row['long'])
+    
+    row['date'] = pd.to_datetime(row['date']).strftime("%m/%d/%Y")
 
     data.loc[len(data.index)] = row
 
     data.to_csv(path, index=False)
 
-# def deleteRow(path: str, data: pd.DataFrame)
+def deleteRow(path: str, data: pd.DataFrame, name: str, date: str):
+    data.drop(data[(data['Name'] == name) & (data['date'] == date)].index)
+
+    data.to_csv(path, index=False)
 
 def addCountry(path: str, data: pd.DataFrame, col: str) -> None:
 
@@ -57,12 +61,16 @@ if __name__ == "__main__":
         'Name': 'Test',
         'long': -81.276223,
         'lat': 43.003999,
-        'date': datetime.date(2024, 1, 12),
+        'date': "1/12/24",
         'intensity': 3,
         'type': 'tornado'
     }
 
-    addRow('./test/MOCK_DATA.csv', data,row)
+    addRow('./test/MOCK_DATA.csv', data, row)
     print(data.tail)
+
+    deleteRow('./test/MOCK_DATA.csv', data, "Test", "1/12/24")
+    print(data.tail)
+
 
     
