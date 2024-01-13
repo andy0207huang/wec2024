@@ -1,3 +1,4 @@
+import datetime
 import pandas as pd
 import numpy as np
 
@@ -9,10 +10,18 @@ def getAllData(csv):
 
     return data
 
-def editData(path: str, data: pd.DataFrame, col: str, value: str, name: str, date: str) -> pd.DataFrame:
+def editData(path: str, data: pd.DataFrame, col: str, value: str, name: str, date: str) -> None:
     data.loc[(data['Name'] == name) & (data['date'] == date), col] = value
-    
-    data.to_csv(path)
+
+    data.to_csv(path, index=False)
+
+def addRow(path: str, data: pd.DataFrame, row: dict) -> None:
+    row['Country'] = convertToCountry(row['lat'], row['long'])
+
+    data.loc[len(data.index)] = row
+
+    data.to_csv(path, index=False)
+
 
 def addCountry(path: str, data: pd.DataFrame, col: str) -> None:
 
@@ -26,7 +35,7 @@ def addCountry(path: str, data: pd.DataFrame, col: str) -> None:
         country = convertToCountry(lat, long)
         data.loc[i, [col]] = country
 
-    data.to_csv(path)
+    data.to_csv(path, index=False)
 
 if __name__ == "__main__":
     csv = open('./test/MOCK_DATA.csv', 'r')
@@ -38,10 +47,21 @@ if __name__ == "__main__":
     # addCountry(data, "Country")
     # print(data)
 
-    date = "1/7/2023"
-    editData('./test/MOCK_DATA.csv', data, "Country", "Serbia", "Pannier", date)
+    # date = "1/7/2023"
+    # editData('./test/MOCK_DATA.csv', data, "Country", "Serbia", "Pannier", date)
 
-    print(data)
+    # print(data)
 
+    row = {
+        'Name': 'Test',
+        'long': -81.276223,
+        'lat': 43.003999,
+        'date': datetime.date(2024, 1, 12),
+        'intensity': 3,
+        'type': 'tornado'
+    }
+
+    addRow('./test/MOCK_DATA.csv', data,row)
+    print(data.tail)
 
     
