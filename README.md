@@ -6,9 +6,9 @@
 <!-- PROJECT LOGO -->
 <div align="center">
   
-  <h3 align="center">Western Engineering Competition 2024, January 12-14, 2024</h3>
+  <h2 align="center">Western Engineering Competition 2024, January 12-14, 2024</h2>
   
-  <h3 align="center">🏆🥈 Programming Category 2nd Place</h3>
+  <h2 align="center">🏆🥈 Programming Category 2nd Place</h2>
 
 ![Alt Text](https://raw.githubusercontent.com/andy0207huang/wec2024/refs/heads/main/wec-screenshots/WEC%202024%20-%20Natural%20Disaster.gif)
 
