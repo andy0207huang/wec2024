@@ -15,6 +15,9 @@ st.set_page_config(
 path = "MOCK_DATA-OUTPUT.csv"
 dfcsv = getAllData(open(path, "r"))
 
+print(dfcsv.dtypes)
+
+
 ## TITLE
 st.title("🌎🌊🌀🌪️ WEC2024")
 st.title("Natural Disaster Dashboard")
@@ -42,13 +45,19 @@ with st.sidebar.expander("Filter by Type:", expanded=True):
 with st.sidebar.expander("Filter by Intensity:", expanded=False):
     selected_intensity = st.slider("Select Intensity Range:", 1, 10, (1, 10))
 
+
+
+dfcsv['daten'] = pd.to_datetime(dfcsv['date'], format='%m/%d/%Y')
 # Sidebar - Filter by Date
 with st.sidebar.expander("Filter by Date:", expanded=False):
-    start_date, end_date = st.select_slider(
-        "Select Date Range:",
-        options=dfcsv["date"].unique(),
-        value=(dfcsv["date"].min(), dfcsv["date"].max()),
-    )
+    start_date = st.date_input("Start date", dfcsv["daten"].min())
+    end_date = st.date_input("End date", dfcsv["daten"].max())
+    # start_date, end_date = st.slider(
+    #     "Select Date Range:",
+    #     min_value=dfcsv["date"].min(),
+    #     max_value=dfcsv["date"].max(),
+    #     value=(dfcsv["date"].min(), dfcsv["date"].max())
+    # )
 
 # Sidebar - Filter by Country Name
 with st.sidebar.expander("Filter by Country Name:", expanded=True):
@@ -59,6 +68,7 @@ with st.sidebar.expander("Filter by Country Name:", expanded=True):
     )
 
 
+st.markdown('### ✏️Disaster Entry')
 # Collapsible section for adding new disaster entry
 with st.expander("Add New Disaster Event", expanded=False):
     new_name = st.text_input("Name", "Hurricane X")
@@ -131,7 +141,7 @@ with st.expander("Delete Disaster Event", expanded=False):
 
 # Applying Filters
 df_selection = dfcsv.query(
-    "Name == @disasterName & type == @disasterType & intensity >= @selected_intensity[0] & intensity <= @selected_intensity[1] & date >= @start_date & date <= @end_date & Country == @Countryname"
+    "Name == @disasterName & type == @disasterType & intensity >= @selected_intensity[0] & intensity <= @selected_intensity[1] & daten >= @start_date & daten <= @end_date & Country == @Countryname"
 )
 
 
@@ -140,10 +150,10 @@ st.markdown('### ❗❗ Most Recent Disaster ❗❗')
 row1_col1, row1_col2, row1_col3, row1_col4 = st.columns(4)
 row2_col1, row2_col2, row2_col3, row2_col4 = st.columns(4)
 
-most_recent_disaster = dfcsv.sort_values(by='date', ascending=False).head(1)
+most_recent_disaster = dfcsv.sort_values(by='daten', ascending=False).head(1)
 
 row1_col1.metric("Name", most_recent_disaster['Name'].values[0])
-row1_col2.metric("Date", most_recent_disaster['date'].values[0])
+row1_col2.metric("Date", str(most_recent_disaster['date'].values[0]))
 row1_col3.metric("Type", most_recent_disaster['type'].values[0])
 row1_col4.metric("Intensity", most_recent_disaster['intensity'].values[0])
 
@@ -191,19 +201,21 @@ render = pdk.Deck(
         "html": 
             "<b>Disaster Name: </b> {Name} <br /> "
             "<b>Longitude: </b> {long} <br /> "
-            "<b>Latitude: </b>{lat} <br /> "
-            "<b>Date: </b>{date} <br />"
+            "<b>Latitude: </b> {lat} <br /> "
+            "<b>Country: </b>{Country} <br />"
+            "<b>Date: </b> {date} <br />"            
             "<b>Intensity: </b>{intensity} <br />"
             "<b>Type: </b>{type} <br />"
     },
-)
+)    
+
 render
 
 ## REALTIME GRAPH
 custom_color_scale = alt.Scale(domain=['tornado', 'hurricane', 'earthquake', 'flood'], range=['#FFFF00', '#A9A9A9', '#A52A2A', '#0000FF'])
 
 # Graph - Vertical Stack Bar by YYYY-MM
-st.header("Vertical Stack Bar of Counts of each Disaster Type by (YYYY-MM)")
+st.header("Vertical Stack Bar of Counts of each Disaster Type by (YYYY-MM) 📅")
 # Aconvert date to YYYY-MM format string
 df_selection['MonthYear'] = pd.to_datetime(df_selection['date']).dt.to_period('M').astype(str)
 # Count each disaster type for each YYYY-MM
@@ -224,7 +236,7 @@ st.altair_chart(vsb1, use_container_width=True)
 
 
 # Graph - Vertical Stack Bar by COUNTRY
-st.header("Vertical Stack Bar of Counts of each Disaster Type by (Country)")
+st.header("Vertical Stack Bar of Counts of each Disaster Type by (Country) 🌎")
 # Count each disaster type by COUNTRY
 aggregated_data_c = pd.DataFrame(df_selection.groupby(['Country', 'type']).size()).reset_index()
 aggregated_data_c.columns = ['Country', 'type', 'count']
@@ -243,7 +255,7 @@ st.altair_chart(vsb2, use_container_width=True)
 
 
 # Graph - Vertical Stack Bar by INTENSITY
-st.header("Vertical Stack Bar of Counts of each Disaster Type by (Intensity)")
+st.header("Vertical Stack Bar of Counts of each Disaster Type by (Intensity) 📈")
 # Count each disaster type by INTENSITY
 aggregated_data_i = pd.DataFrame(df_selection.groupby(['intensity', 'type']).size()).reset_index()
 aggregated_data_i.columns = ['intensity', 'type', 'count']
@@ -262,4 +274,4 @@ st.altair_chart(vsb3, use_container_width=True)
 
 ## RAW TABLE DATA
 st.header("Data Table")
-st.dataframe(df_selection)
+st.dataframe(df_selection.iloc[:, :7])
